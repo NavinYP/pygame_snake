@@ -1,6 +1,5 @@
 import pygame
 import sys
-import time
 import random
 
 # Initialize Pygame
@@ -33,10 +32,16 @@ score = 0
 
 # Set up the direction
 direction = 'RIGHT'
-next_direction = 'RIGHT'  # Temporary variable for the next direction
+next_direction = 'RIGHT'
+
+# Initialize the clock and movement timing
+clock = pygame.time.Clock()
+desired_fps = 120  # Set high fps for smooth rendering
+snake_speed = 40  # Milliseconds per snake movement update
+last_move_time = pygame.time.get_ticks()  # Last time snake moved
 
 def reset_game():
-    global snake_pos, food_pos, snake_body, direction, next_direction, score, menu_active, game_over
+    global snake_pos, food_pos, snake_body, direction, next_direction, score, menu_active, game_over, last_move_time
     snake_pos = [100, 50]
     food_pos = [random.randrange(1, (WIDTH // 10)) * 10, random.randrange(1, (HEIGHT // 10)) * 10]
     snake_body = [[100, 50], [90, 50], [80, 50]]
@@ -45,6 +50,7 @@ def reset_game():
     score = 0
     menu_active = True
     game_over = False
+    last_move_time = pygame.time.get_ticks()
 
 # Main game loop
 while True:
@@ -91,28 +97,35 @@ while True:
         win.blit(retry_text, (WIDTH // 2 - retry_text.get_width() // 2, HEIGHT // 2 + game_over_text.get_height() // 2))
 
     else:
-        # Move the snake
-        direction = next_direction  # Update direction only once per frame
-        if direction == 'UP':
-            snake_pos[1] -= 10
-        elif direction == 'DOWN':
-            snake_pos[1] += 10
-        elif direction == 'LEFT':
-            snake_pos[0] -= 10
-        elif direction == 'RIGHT':
-            snake_pos[0] += 10
+        # Check if it's time to move the snake
+        current_time = pygame.time.get_ticks()
+        if current_time - last_move_time > snake_speed:
+            # Move the snake
+            direction = next_direction  # Update direction only once per movement interval
+            if direction == 'UP':
+                snake_pos[1] -= 10
+            elif direction == 'DOWN':
+                snake_pos[1] += 10
+            elif direction == 'LEFT':
+                snake_pos[0] -= 10
+            elif direction == 'RIGHT':
+                snake_pos[0] += 10
 
-        # Add to the snake body if it eats food
-        if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
-            score += 1
-            food_pos = [random.randrange(1, (WIDTH // 10)) * 10, random.randrange(1, (HEIGHT // 10)) * 10]
-        else:
-            if len(snake_body) > 0:  # Remove the last segment of the snake body if it didn't eat any food
-                snake_body.pop()
+            # Add to the snake body if it eats food
+            if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
+                score += 1
+                food_pos = [random.randrange(1, (WIDTH // 10)) * 10, random.randrange(1, (HEIGHT // 10)) * 10]
+            else:
+                if len(snake_body) > 0:  # Remove the last segment of the snake body if it didn't eat any food
+                    snake_body.pop()
 
-        # Add new segment to the body
-        snake_body.insert(0, list(snake_pos))
+            # Add new segment to the body
+            snake_body.insert(0, list(snake_pos))
 
+            # Update last movement time
+            last_move_time = current_time
+
+        # Draw everything
         win.fill(BACKGROUND_COLOR)
         for pos in snake_body:
             pygame.draw.rect(win, SNAKE_COLOR, (pos[0], pos[1], 10, 10))
@@ -132,5 +145,5 @@ while True:
     # Update the display
     pygame.display.update()
 
-    # Cap the frame rate
-    time.sleep(0.1)
+    # Control frame rate using clock
+    clock.tick(desired_fps)  # Controls rendering frame rate for smooth visuals
