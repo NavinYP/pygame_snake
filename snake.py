@@ -19,6 +19,7 @@ pygame.display.set_caption('Snake Game')
 
 # Set up the font
 font = pygame.font.Font(None, 36)
+score_font = pygame.font.Font(None, 24)
 
 # Main menu variables
 menu_active = True
@@ -27,6 +28,7 @@ menu_active = True
 snake_pos = [100, 50]
 food_pos = [random.randrange(1, (WIDTH//10)) * 10, random.randrange(1, (HEIGHT//10)) * 10]
 snake_body = [[100, 50], [90, 50], [80, 50]]
+score = 0
 
 # Set up the direction
 direction = 'RIGHT'
@@ -62,6 +64,7 @@ while True:
                     food_pos = [random.randrange(1, (WIDTH//10)) * 10, random.randrange(1, (HEIGHT//10)) * 10]
                     snake_body = [[100, 50], [90, 50], [80, 50]]
                     direction = 'RIGHT'
+                    score = 0
                     menu_active = True
 
     # Draw the main menu
@@ -86,9 +89,11 @@ while True:
 
         # Add to the snake body if it eats food
         if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
+            score += 1
             food_pos = [random.randrange(1, (WIDTH//10)) * 10, random.randrange(1, (HEIGHT//10)) * 10]
         else:
-            snake_body.pop()
+            if len(snake_body) > 0:  # Remove the last segment of the snake body if it didn't eat any food
+                snake_body.pop()
 
         # Add new segment to the body
         snake_body.insert(0, list(snake_pos))
@@ -97,6 +102,10 @@ while True:
         for pos in snake_body:
             pygame.draw.rect(win, SNAKE_COLOR, (pos[0], pos[1], 10, 10))
         pygame.draw.rect(win, FOOD_COLOR, (food_pos[0], food_pos[1], 10, 10))
+
+        # Display score
+        score_text = score_font.render("Score: " + str(score), True, SNAKE_COLOR)
+        win.blit(score_text, (10, 10))
 
     # Update the display
     pygame.display.update()
