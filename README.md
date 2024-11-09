@@ -28,11 +28,15 @@ The objective is simple: eat the food that appears on the screen to grow your sn
 - **Space**: Start the game
 - **R**: Restart the game after game over
 
+## 🖼️ Screenshots
+
+![Gameplay Screenshot](assets/screenshots/snake_reloaded_gameplay.png)
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-Ensure you have **Python 3.11** and **Pygame** installed.
+Ensure you have **Python 3.11.x** and **Pygame** installed.
 
 Install Pygame using pip:
 
@@ -54,10 +58,39 @@ pip install pygame
    ```bash
    python snake_game.py
    ```
+---
 
-## 🖼️ Screenshots
+## 🛠️ Build Instructions
 
-![Gameplay Screenshot](assets/screenshots/snake_reloaded_gameplay.png)
+Follow these steps to package the game as a Windows executable:
+
+### Prerequisites
+
+- **Python 3.11.x** installed on your system.
+- **Pygame** and **PyInstaller** installed via pip:
+
+  ```bash
+  pip install pygame pyinstaller
+  ```
+
+### Steps to Build
+
+1. **Run PyInstaller** to create the executable:
+
+   ```bash
+   pyinstaller --onefile --windowed snake.py
+   ```
+
+   - `--onefile`: Packages everything into a single executable file.
+   - `--windowed`: Runs the game without a command prompt window.
+
+   If you have a custom icon for the game, use the `--icon` option:
+
+   ```bash
+   pyinstaller --onefile --windowed --icon=icon.ico snake.py
+   ```
+
+2. **Run the Executable**: After running the command, the `.exe` file will be located in the `dist` folder.
 
 ## 🤝 Credits
 
